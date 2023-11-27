@@ -4,8 +4,8 @@ authors:
   - family-names: "Schulthess"
     given-names: "Ivo"
     orcid: "https://orcid.org/0000-0002-5621-2462"
-title: "ivoschulthess/axionSim: v1.0"
-version: 1.0
+title: "ivoschulthess/axionSim: v1.1"
+version: 1.1
 doi: 10.5281/zenodo.10208486
 date-released: 2023-11-27
 url: "https://github.com/ivoschulthess/axionSim"
