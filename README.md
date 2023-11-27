@@ -7,4 +7,4 @@ Play with it online: <br/>
 <br/>
 
 Official release: <br/>
-[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.10208486.svg)](https://doi.org/10.5281/zenodo.10208486)
+[![DOI](https://zenodo.org/badge/doi/10.5281/zenodo.10208485.svg)](https://doi.org/10.5281/zenodo.10208485)
