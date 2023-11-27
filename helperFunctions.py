@@ -1,8 +1,6 @@
 import numpy as np
 from multiprocessing import Pool
-
 from scipy.constants import physical_constants
-
 from IPython.display import clear_output
 from time import sleep
 
@@ -13,15 +11,19 @@ from time import sleep
 
 # just the normal pi = 3.1415
 pi = np.pi
+
 # gyromagnetic ratio of the neutron in [rad/s/T]
 gamma_n = physical_constants['neutron gyromag. ratio'][0]
+
 # Plack constant in [m**2*kg/s]
 h = physical_constants['Planck constant'][0]
+
 # neutron mass in [kg]
 mass_n = physical_constants['neutron mass'][0]
 
 # spin up representation vector
 spinUp = np.array([[1],[0]])
+
 # spin down representation vector
 spinDn = np.array([[0],[1]])
 
@@ -31,14 +33,17 @@ spinDn = np.array([[0],[1]])
 ##################################
 
 class dotdict(dict):
-    
-    """dot.notation access to dictionary attributes"""
+    '''
+    dot.notation access to dictionary attributes
+    '''
     __getattr__ = dict.get
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__
 
 def track_job(job, update_interval=2):
-    # total number of jobs
+    '''
+    helper function to print status of multithreaded calculation
+    '''
     jobLength = job._number_left
     while job._number_left > 0:
         print('\rTasks (Chunks) remaining = {0}({1}) / {2}({3})     '.format(
@@ -53,7 +58,6 @@ def sinFct(t, frequency, amplitude, phase, offset):
     
     PARAMETERS
     -----------------
-    
     t:          time array in seconds
     frequency:  frequency in Hz
     amplitude:  amplitude of sinusoidal function
@@ -62,11 +66,9 @@ def sinFct(t, frequency, amplitude, phase, offset):
     
     RETURN
     -----------------
-    
     sin : 1d-array
         sinusoidal signal
         amplitude * np.sin(2*np.pi*frequency*t - phase*np.pi/180) + offset
-    
     '''
     return amplitude * np.sin(2*np.pi*frequency*t - phase*np.pi/180) + offset
 
@@ -88,10 +90,30 @@ def resonantCancelation(f, B, t_int, gamma=gamma_n):
     RETURN
     ----------------------------
     gamma * B / np.pi / f * np.sin(np.pi*f*t_int)
-        
     '''
     return abs(gamma * B / np.pi / f * np.sin(np.pi*f*t_int))
+
+def butterworthFct(f, aMax, fCut, n=1):
+    '''
+    higher-order low-pass filter function
     
+    PARAMETERS
+    ----------------------------
+    f : 1d-array
+        frequency (x-axis)
+    amplitude : float
+        amplitude of signal, hight of the plateau
+    fCut : float
+        cut-off frequency
+    n : float
+        order of the low-pass filter
+        
+    RETURN
+    ----------------------------
+    aMax / np.sqrt( 1 + (f/fCut)**(2*n) )
+    '''    
+    return aMax / np.sqrt(1+(f/fCut)**(2*n))
+
     
 ##################################
 ## MATRIX FUNCTIONS
@@ -99,7 +121,7 @@ def resonantCancelation(f, B, t_int, gamma=gamma_n):
 
 def matSpinflip(t0, t1, B0, B1, omega, theta=0.0, N=1000):
     '''
-    calculates the interaction matrix of the SPIN-FLIPPER
+    interaction matrix of the SPIN-FLIPPER
     
     PARAMETERS
     ----------------------------
@@ -122,7 +144,6 @@ def matSpinflip(t0, t1, B0, B1, omega, theta=0.0, N=1000):
     ----------------------------
     U : 2x2 matrix
         propagation matrix through spin-flipper
-        
     '''
     
     # calculate the time step
@@ -156,7 +177,7 @@ def matSpinflip(t0, t1, B0, B1, omega, theta=0.0, N=1000):
 
 def matPrecession(t0, t1, B0, N=1000):
     '''
-    calculates the interaction matrix of the LARMOR PRECESSION
+    matrix of the LARMOR PRECESSION
     
     PARAMETERS
     ----------------------------
@@ -173,7 +194,6 @@ def matPrecession(t0, t1, B0, N=1000):
     ----------------------------
     U : 2x2 matrix
         propagation matrix through Larmor precession area
-        
     '''
     
     # calculate the time step
@@ -206,7 +226,7 @@ def matPrecession(t0, t1, B0, N=1000):
 
 def matAxionPrecession(t0, t1, B0, BA, omegaA, thetaA, N=1000):
     '''
-    calculates the interaction matrix of the LARMOR PRECESSION
+    matrix of the LARMOR PRECESSION including an oscillating AXION field
     
     PARAMETERS
     ----------------------------
@@ -228,8 +248,7 @@ def matAxionPrecession(t0, t1, B0, BA, omegaA, thetaA, N=1000):
     RETURN
     ----------------------------
     U : 2x2 matrix
-        propagation matrix through Larmor precession area
-        
+        propagation matrix through precession area
     '''
     
     # calculate the time step
